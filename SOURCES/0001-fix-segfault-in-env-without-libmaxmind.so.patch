@@ -1,0 +1,26 @@
+From 2978e6afd68b1e028855e9166af6eff47eb60f41 Mon Sep 17 00:00:00 2001
+From: Martin Sehnoutka <msehnout@redhat.com>
+Date: Fri, 3 Aug 2018 10:48:12 +0200
+Subject: [PATCH] fix segfault in env without libmaxmind.so
+
+---
+ ipcalc-maxmind.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/ipcalc-maxmind.c b/ipcalc-maxmind.c
+index bb4f495..6f0033b 100644
+--- a/ipcalc-maxmind.c
++++ b/ipcalc-maxmind.c
+@@ -113,6 +113,9 @@ void geo_ip_lookup(const char *ip, char **country, char **ccode, char **city, ch
+     int gai_error, mmdb_error, status, coordinates=0;
+     double latitude, longitude;
+ 
++    if (geo_setup() != 0)
++        return;
++
+     /* Open the system maxmind database with countries */
+     status = pMMDB_open(MAXMINDDB_LOCATION_COUNTRY, MMDB_MODE_MMAP, &mmdb);
+     if (MMDB_SUCCESS == status) {
+-- 
+2.17.1
+
